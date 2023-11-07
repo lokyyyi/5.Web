@@ -32,7 +32,7 @@
 		<tr>
 			<td><%=list.get(i).getSeq() %></td>
 			<td><%=list.get(i).getWriter() %></td>
-			<td><%=list.get(i).getTitle() %></td>
+			<td><a href="mycontroller.jsp?command=boarddetail&seq=<%=list.get(i).getSeq()%>"><%=list.get(i).getTitle() %></a></td>
 			<td><%=list.get(i).getRegdate() %></td>
 		</tr>
 <%

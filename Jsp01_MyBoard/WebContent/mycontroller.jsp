@@ -68,6 +68,70 @@
 			</script>
 <%
 		}
+	}else if(command.equals("boarddetail")){
+		int seq = Integer.parseInt(request.getParameter("seq"));
+		//1. 필요데이터 준비
+		MVCBoardDto res = dao.selectOne(seq);
+		
+		//2. 페이지 전환
+		request.setAttribute("dto", res);
+		pageContext.forward("boarddetail.jsp");
+	
+	}else if(command.equals("boardupdateform")){
+		int seq = Integer.parseInt(request.getParameter("seq"));
+		MVCBoardDto res = dao.selectOne(seq);
+		
+		request.setAttribute("dto", res);
+		pageContext.forward("boardupdate.jsp");
+		
+	}else if(command.equals("boardupdate")){
+		String title = request.getParameter("title");
+		String content = request.getParameter("content");
+		int seq = Integer.parseInt(request.getParameter("seq"));
+		
+		MVCBoardDto dto = new MVCBoardDto();
+		dto.setTitle(title);
+		dto.setContent(content);
+		dto.setSeq(seq);
+		
+		int res = dao.update(dto);
+		
+		if(res>0){
+%>
+		<script type="text/javascript">
+			alert("글 수정 성공");
+			location.href="mycontroller.jsp?command=boarddetail&seq="+<%=seq%>;
+		</script>
+<%
+		}else{
+%>
+		<script type="text/javascript">
+			alert("글 수정 실패");
+			location.href="mycontroller.jsp?command=boardupdateform&seq="+<%=seq%>;
+		</script>
+<%
+		}
+	}else if(command.equals("boarddelete")){
+		int seq = Integer.parseInt(request.getParameter("seq"));
+		
+		int res = dao.delete(seq);
+		
+		if(res>0){
+%>
+		<script type="text/javascript">
+			alert("글 삭제 성공");
+			location.href="mycontroller.jsp?command=boardlist";
+		</script>
+<%			
+		}else{
+			
+%>
+		<script type="text/javascript">
+			alert("글 삭제 실패");
+			location.href="mycontroller.jsp?command=boarddetail&seq="+<%=seq%>;
+		</script>
+<%
+		}
 	}
 %>
 <%-- <h1><%=command %></h1> --%>

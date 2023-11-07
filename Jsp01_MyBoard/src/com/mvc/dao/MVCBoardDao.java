@@ -52,8 +52,39 @@ public class MVCBoardDao {
 	}
 	
 	//상세조회
-	public MVCBoardDto selectOn(int seq) {
-		return null;
+	public MVCBoardDto selectOne(int seq) {
+		//준비
+		Connection con = getConnection();
+		PreparedStatement pstm = null;
+		ResultSet rs = null;
+		MVCBoardDto res = new MVCBoardDto();
+		
+		String sql = " SELECT * FROM MVCBOARD WHERE SEQ=? ";
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			pstm.setInt(1, seq);
+			System.out.println("03.query 준비 " + sql);
+			
+			rs = pstm.executeQuery();
+			System.out.println("04.query 실행 및 리턴");
+			while(rs.next()) {
+				res.setSeq(rs.getInt("SEQ"));
+				res.setWriter(rs.getString(2));
+				res.setTitle(rs.getString("TITLE"));
+				res.setContent(rs.getString(3));
+				res.setRegdate(rs.getDate(5));
+			}
+		} catch (SQLException e) {
+			System.out.println("3/4단계 에러");
+			e.printStackTrace();
+		}finally {
+			close(rs);
+			close(pstm);
+			close(con);
+			System.out.println("05. db종료\n");
+		}
+		return res;
 	}
 	
 	//추가
@@ -94,11 +125,65 @@ public class MVCBoardDao {
 	}
 	//수정
 	public int update(MVCBoardDto dto) {
-		return 0;
+		//준비
+		Connection con = getConnection();
+		PreparedStatement pstm = null;
+		int res = 0;
+		
+		String sql = " UPDATE MVCBOARD SET TITLE=?, CONTENT=? WHERE SEQ=?";
+		
+		try {
+			pstm = con.prepareStatement(sql);
+			
+			pstm.setString(1, dto.getTitle());
+			pstm.setString(2, dto.getContent());
+			pstm.setInt(3, dto.getSeq());
+			System.out.println("03.query 준비: "+ sql);
+			
+			res = pstm.executeUpdate();
+			System.out.println("04.query 실행 및 리턴");
+			
+			if(res>0) {
+				commit(con);
+			}
+		} catch (SQLException e) {
+			System.out.println("3/4 단계 에러");
+			e.printStackTrace();
+		} finally {
+			close(pstm);
+			close(con);
+			System.out.println("05.db 종료 \n");
+		}
+		return res;
 	}
 	
 	//삭제
-	public int delete(MVCBoardDto dto) {
-		return 0;
+	public int delete(int seq) {
+		//준비
+		Connection con = getConnection();
+		PreparedStatement pstm = null;
+		int res = 0;
+		
+		String sql = " DELETE FROM MVCBOARD WHERE SEQ=? ";
+	
+		try {
+			pstm = con.prepareStatement(sql);
+			
+			pstm.setInt(1, seq);
+			
+			res = pstm.executeUpdate();
+			System.out.println("04. query 실행 및 리턴");
+			if(res>0) {
+				commit(con);
+			}
+		} catch (SQLException e) {
+			System.out.println("3/4단계 에러");
+			e.printStackTrace();
+		} finally {
+			close(con);
+			close(pstm);
+			System.out.println("05. db종료\n");
+		}
+		return res;
 	}
 }
